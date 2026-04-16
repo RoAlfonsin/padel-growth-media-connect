@@ -4,8 +4,10 @@ from app.models import user  # IMPORTANTE
 
 app = FastAPI()
 
-# Crear tablas automáticamente
-Base.metadata.create_all(bind=engine)
+@app.on_event("startup")
+def on_startup():
+    # Crear tablas al arrancar la app, no al importar el módulo.
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
