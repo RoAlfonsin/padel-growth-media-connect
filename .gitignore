@@ -3,6 +3,14 @@ backend/venv/
 backend/__pycache__/
 backend/*.pyc
 backend/.env
+backend/app/__pycache__/
+
+#Models
+backend/app/models/__pycache__
+#schemas
+backend/app/schemas/__pycache__/
+#utils
+backend/app/utils/__pycache__/
 
 # Frontend
 frontend/node_modules/
@@ -11,3 +19,5 @@ frontend/.env
 
 # General
 .DS_Store
+.vscode
+.codex
