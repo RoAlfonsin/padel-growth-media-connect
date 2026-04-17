@@ -14,4 +14,4 @@ class Club(Base):
     pgm_profile_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    retas = relationship("Reta", back_populates="club")
+    #retas = relationship("Reta", back_populates="club")
