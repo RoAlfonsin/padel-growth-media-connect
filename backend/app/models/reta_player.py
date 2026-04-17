@@ -9,8 +9,8 @@ class RetaPlayer(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     reta_id = Column(Integer, ForeignKey("retas.id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    invitado_nombre = Column(String, nullable=True)  # Solo para invitados
     pareja = Column(Boolean, default=False)
     confirmado = Column(Boolean, default=False)
     status = Column(String, default="activo")  # activo | salio
