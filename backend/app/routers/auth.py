@@ -8,6 +8,8 @@ from app.utils.security import hash_password
 from app.utils.security import verify_password
 from app.utils.jwt import create_access_token
 
+from app.dependencies.auth import get_current_user
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register")
@@ -67,4 +69,14 @@ def login(user_data: dict, db: Session = Depends(get_db)):
     return {
         "access_token": token,
         "token_type": "bearer"
+    }
+
+@router.get("/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "nombre": current_user.nombre,
+        "telefono": current_user.telefono,
+        "nivel": current_user.nivel,
+        "rol": current_user.rol
     }
