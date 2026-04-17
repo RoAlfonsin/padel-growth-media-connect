@@ -5,6 +5,7 @@ backend/*.pyc
 backend/.env
 backend/app/__pycache__/
 backend/app/routers/__pycache__/auth.cpython-313.pyc
+backend/app/dependencies/__pycache__
 
 #Models
 backend/app/models/__pycache__
