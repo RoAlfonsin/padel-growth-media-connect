@@ -202,7 +202,8 @@ def join_reta(
             invitado_nombre=nombre_pareja,
             confirmado=False,
             pareja=False,
-            status="activo"
+            status="activo",
+            parent_player_id=current_user.id # 👈 relacionamos con el jugador principal
         )
 
         db.add(pareja_player)

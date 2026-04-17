@@ -14,6 +14,7 @@ class RetaPlayer(Base):
     pareja = Column(Boolean, default=False)
     confirmado = Column(Boolean, default=False)
     status = Column(String, default="activo")  # activo | salio
+    parent_player_id = Column(Integer, nullable=True) # Para jugadores en pareja
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
