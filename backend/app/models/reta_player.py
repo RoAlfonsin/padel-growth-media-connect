@@ -1,0 +1,22 @@
+from sqlalchemy import Column, Integer, Boolean, DateTime, ForeignKey, String
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+from app.database import Base
+
+class RetaPlayer(Base):
+    __tablename__ = "reta_players"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    reta_id = Column(Integer, ForeignKey("retas.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    pareja = Column(Boolean, default=False)
+    confirmado = Column(Boolean, default=False)
+    status = Column(String, default="activo")  # activo | salio
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # 🔗 Relaciones
+    reta = relationship("Reta", back_populates="jugadores")
+    user = relationship("User")
