@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from app.database import engine, Base
 from app.models import user, club  # IMPORTANTE
-from app.routers import auth
+from app.routers import auth, clubs
 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(clubs.router)
+
 
 @app.on_event("startup")
 def on_startup():
