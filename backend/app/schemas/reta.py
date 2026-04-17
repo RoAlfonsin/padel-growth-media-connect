@@ -21,3 +21,20 @@ class RetaResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class RetaListResponse(BaseModel):
+    id: int
+    fecha: datetime
+    nivel: str
+    formato: Optional[str]
+    cupos_max: int
+    ubicacion: Optional[str]
+    club_logo_url: Optional[str]
+    club_nombre: str
+    cupos_disponibles: int
+    total_jugadores: int
+    jugadores_activos: list
+
+    class Config:
+        orm_mode = True
