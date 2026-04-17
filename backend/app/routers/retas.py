@@ -211,3 +211,40 @@ def join_reta(
     db.commit()
 
     return {"message": "Te uniste a la reta correctamente"}
+
+@router.post("/{reta_id}/leave")
+def leave_reta(
+    reta_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # 🔍 Buscar registro del usuario
+    player = db.query(RetaPlayer).filter(
+        RetaPlayer.reta_id == reta_id,
+        RetaPlayer.user_id == current_user.id,
+        RetaPlayer.status == "activo"
+    ).first()
+
+    if not player:
+        raise HTTPException(status_code=400, detail="No estás en esta reta")
+    
+    if player.confirmado:
+        raise HTTPException(status_code=400, detail="No puedes salir de la reta después de confirmar tu asistencia")
+
+    # 🚪 Salir de la reta
+    player.status = "salio"
+    player.confirmado = False  # reset confirmación al salir
+
+    # salir invitados ligados
+    invitados = db.query(RetaPlayer).filter(
+    RetaPlayer.parent_player_id == current_user.id,
+    RetaPlayer.status == "activo"
+    ).all()
+
+    for inv in invitados:
+        inv.status = "salio"
+        inv.confirmado = False
+
+    db.commit()
+
+    return {"message": "Saliste de la reta correctamente"}
