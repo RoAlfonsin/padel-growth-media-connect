@@ -6,6 +6,7 @@ from app.database import get_db
 from app.models.reta import Reta
 from app.models.club import Club
 from app.models.user import User
+from app.models.reta_player import RetaPlayer
 from app.schemas.reta import RetaCreate, RetaResponse, RetaListResponse, RetaDetailResponse
 from app.dependencies.auth import get_current_user
 
@@ -85,7 +86,13 @@ def get_retas(
             "club_logo_url": reta.club.logo_url,
             "cupos_disponibles": cupos_disponibles,
             "total_jugadores": len(jugadores_activos),
-            "jugadores_activos": jugadores_activos,
+            "jugadores_activos": [
+            {
+                "user_id": rp.user.id if rp.user else None,
+                "nombre": rp.user.nombre if rp.user else rp.invitado_nombre
+            }
+            for rp in jugadores_activos
+            ],
         })
 
     return result
@@ -108,14 +115,24 @@ def get_reta_detail(
     jugadores_response = []
 
     for rp in jugadores_activos:
-        jugadores_response.append({
-            "user_id": rp.user.id,
-            "nombre": rp.user.nombre,
-            "nivel": rp.user.nivel,
-            "confirmado": rp.confirmado,
-            "pareja": rp.pareja,
-            "status": rp.status
-        })
+        if rp.user:  # 👤 Usuario real
+            jugadores_response.append({
+                "user_id": rp.user.id,
+                "nombre": rp.user.nombre,
+                "nivel": rp.user.nivel,
+                "confirmado": rp.confirmado,
+                "pareja": rp.pareja,
+                "status": rp.status
+            })
+        else:  # 👥 Invitado
+            jugadores_response.append({
+                "user_id": None,
+                "nombre": rp.invitado_nombre,
+                "nivel": None,
+                "confirmado": rp.confirmado,
+                "pareja": False,
+                "status": rp.status
+            })
 
     cupos_ocupados = len(jugadores_activos)
     cupos_disponibles = reta.cupos_max - cupos_ocupados
@@ -134,3 +151,62 @@ def get_reta_detail(
         "cupos_ocupados": cupos_ocupados,
         "cupos_disponibles": cupos_disponibles
     }
+
+@router.post("/{reta_id}/join")
+def join_reta(
+    reta_id: int,
+    con_pareja: bool = False,
+    nombre_pareja: str | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # 🔍 Buscar reta
+    reta = db.query(Reta).filter(Reta.id == reta_id).first()
+
+    if not reta:
+        raise HTTPException(status_code=404, detail="Reta no encontrada")
+
+    # 🔍 Buscar si ya existe registro del usuario
+    existing = db.query(RetaPlayer).filter(
+        RetaPlayer.reta_id == reta_id,
+        RetaPlayer.user_id == current_user.id
+    ).first()
+
+    if existing:
+        # 👉 Si estaba "salio", lo reactivamos
+        if existing.status == "salio":
+            existing.status = "activo"
+            existing.confirmado = False
+            existing.pareja = con_pareja
+        else:
+            raise HTTPException(status_code=400, detail="Ya estás en la reta")
+    else:
+        # 🧱 Crear registro principal
+        player = RetaPlayer(
+            reta_id=reta_id,
+            user_id=current_user.id,
+            confirmado=False,
+            pareja=con_pareja,
+            status="activo"
+        )
+        db.add(player)
+
+    # 👥 Manejo de pareja
+    if con_pareja:
+        if not nombre_pareja:
+            raise HTTPException(status_code=400, detail="Nombre de pareja requerido")
+
+        pareja_player = RetaPlayer(
+            reta_id=reta_id,
+            user_id=None,  # 👈 invitado
+            invitado_nombre=nombre_pareja,
+            confirmado=False,
+            pareja=False,
+            status="activo"
+        )
+
+        db.add(pareja_player)
+
+    db.commit()
+
+    return {"message": "Te uniste a la reta correctamente"}

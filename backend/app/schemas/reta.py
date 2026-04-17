@@ -41,7 +41,7 @@ class RetaListResponse(BaseModel):
 
 
 class PlayerInReta(BaseModel):
-    user_id: int
+    user_id: Optional[int]
     nombre: str
     nivel: str | None
     confirmado: bool
