@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from datetime import datetime
 from sqlalchemy.orm import Session
 
@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.reta import Reta
 from app.models.club import Club
 from app.models.user import User
-from app.schemas.reta import RetaCreate, RetaResponse, RetaListResponse
+from app.schemas.reta import RetaCreate, RetaResponse, RetaListResponse, RetaDetailResponse
 from app.dependencies.auth import get_current_user
 
 router = APIRouter(prefix="/retas", tags=["retas"])
@@ -89,3 +89,48 @@ def get_retas(
         })
 
     return result
+
+@router.get("/{reta_id}", response_model=RetaDetailResponse)
+def get_reta_detail(
+    reta_id: int = Path(...),
+    db: Session = Depends(get_db)
+):
+    reta = db.query(Reta).filter(Reta.id == reta_id).first()
+
+    if not reta:
+        raise HTTPException(status_code=404, detail="Reta no encontrada")
+
+    # 👥 jugadores activos
+    jugadores_activos = [
+        rp for rp in reta.jugadores if rp.status == "activo"
+    ]
+
+    jugadores_response = []
+
+    for rp in jugadores_activos:
+        jugadores_response.append({
+            "user_id": rp.user.id,
+            "nombre": rp.user.nombre,
+            "nivel": rp.user.nivel,
+            "confirmado": rp.confirmado,
+            "pareja": rp.pareja,
+            "status": rp.status
+        })
+
+    cupos_ocupados = len(jugadores_activos)
+    cupos_disponibles = reta.cupos_max - cupos_ocupados
+
+    return {
+        "id": reta.id,
+        "fecha": reta.fecha,
+        "nivel": reta.nivel,
+        "formato": reta.formato,
+        "cupos_max": reta.cupos_max,
+        "ubicacion": reta.ubicacion,
+        "club_nombre": reta.club.nombre,
+        "club_logo_url": reta.club.logo_url,
+        "club_direccion": reta.club.direccion,
+        "jugadores": jugadores_response,
+        "cupos_ocupados": cupos_ocupados,
+        "cupos_disponibles": cupos_disponibles
+    }
