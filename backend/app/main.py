@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database import engine, Base
-from app.models import user, club  # IMPORTANTE
+from app.models import user, club, reta, reta_player  # IMPORTANTE
 from app.routers import auth, clubs
 
 app = FastAPI()
