@@ -166,11 +166,23 @@ def join_reta(
     if not reta:
         raise HTTPException(status_code=404, detail="Reta no encontrada")
 
+    # ⏰ Validar que la reta siga activa
+    if reta.fecha < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="La reta ya pasó")
+
+    # Validar que el usuario no esté vetado
+    if current_user.veto:
+        raise HTTPException(status_code=403, detail="No puedes unirte a la reta porque estás vetado")
+
     # 🔍 Buscar si ya existe registro del usuario
     existing = db.query(RetaPlayer).filter(
         RetaPlayer.reta_id == reta_id,
         RetaPlayer.user_id == current_user.id
     ).first()
+
+    # El usuario ya tiene un registro en esta reta
+    if existing and existing.status == "activo":
+        raise HTTPException(status_code=400, detail="Ya estás en la reta")
 
     if existing:
         # 👉 Si estaba "salio", lo reactivamos
