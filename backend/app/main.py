@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from app.database import engine, Base
 from app.models import user, club, reta, reta_player  # IMPORTANTE
-from app.routers import auth, clubs, retas
+from app.routers import auth, clubs, retas, vetos
 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(clubs.router)
 app.include_router(retas.router)
+app.include_router(vetos.router)
 
 
 
