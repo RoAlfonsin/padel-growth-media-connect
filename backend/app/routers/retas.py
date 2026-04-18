@@ -260,3 +260,40 @@ def leave_reta(
     db.commit()
 
     return {"message": "Saliste de la reta correctamente"}
+
+@router.post("/{reta_id}/confirm/{user_id}")
+def confirm_player(
+    reta_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # 🔐 Validar rol master
+    if current_user.rol != "master":
+        raise HTTPException(status_code=403, detail="Solo masters pueden confirmar jugadores")
+
+    # 🔍 Buscar jugador principal
+    player = db.query(RetaPlayer).filter(
+        RetaPlayer.reta_id == reta_id,
+        RetaPlayer.user_id == user_id,
+        RetaPlayer.status == "activo"
+    ).first()
+
+    if not player:
+        raise HTTPException(status_code=404, detail="Jugador no encontrado en la reta")
+
+    # ✅ Confirmar jugador principal
+    player.confirmado = True
+
+    # 👥 Confirmar invitados ligados
+    invitados = db.query(RetaPlayer).filter(
+        RetaPlayer.parent_player_id == user_id,
+        RetaPlayer.status == "activo"
+    ).all()
+
+    for inv in invitados:
+        inv.confirmado = True
+
+    db.commit()
+
+    return {"message": "Jugador confirmado correctamente"}
