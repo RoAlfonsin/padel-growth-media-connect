@@ -1,6 +1,7 @@
 import { useState } from "react"
-import { Container, Form, Button, Alert } from "react-bootstrap"
+import { Container, Form, Button, Alert, Image } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
+import LogoPGM from "../assets/LogoPGM.svg"
 
 function Register() {
   const navigate = useNavigate()
@@ -81,8 +82,8 @@ function Register() {
 
   return (
     <Container className="mt-5" style={{ maxWidth: "400px" }}>
-      <h2 className="mb-4 text-center">Padel Growth Media Connect</h2>
-      <h5 className="mb-4 text-center text-muted">Registro</h5>
+      <Image src={LogoPGM} alt="Logo PGM" className="d-block mx-auto mb-3" style={{maxWidth: "100px"}}/>
+      <h5 className="d-block mb-4 text-center">Regístrate para jugar con la mejor comunidad</h5>
 
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -138,8 +139,9 @@ function Register() {
 
         <Button
           variant="primary"
+          size="sm"
           type="submit"
-          className="w-100"
+          className="w-100 mx-auto d-block"
           disabled={loading}
         >
           {loading ? "Registrando..." : "Registrarse"}
