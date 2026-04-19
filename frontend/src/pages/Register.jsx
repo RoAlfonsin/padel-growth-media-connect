@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Container, Form, Button, Alert, Image } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import LogoPGM from "../assets/LogoPGM.svg"
+import API_URL from "../utils/apiClient"
 
 function Register() {
   const navigate = useNavigate()
@@ -56,7 +57,7 @@ function Register() {
     try {
       setLoading(true)
 
-      const res = await fetch("http://localhost:8000/auth/register", {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
