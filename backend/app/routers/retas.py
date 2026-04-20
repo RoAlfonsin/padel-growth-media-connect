@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
-from datetime import datetime
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.database import get_db
 from app.models.reta import Reta
@@ -53,7 +53,7 @@ def get_retas(
     tipo: str = "activas",  # activas | historial
     db: Session = Depends(get_db)
 ):
-    now = datetime.utcnow()
+    now = func.now()
 
     query = db.query(Reta)
 
@@ -167,7 +167,7 @@ def join_reta(
         raise HTTPException(status_code=404, detail="Reta no encontrada")
 
     # ⏰ Validar que la reta siga activa
-    if reta.fecha < datetime.utcnow():
+    if reta.fecha < func.now():
         raise HTTPException(status_code=400, detail="La reta ya pasó")
 
     # Validar que el usuario no esté vetado

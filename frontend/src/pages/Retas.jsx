@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Container, Card, Button, Spinner, Alert, Image } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { fetchWithAuth } from "../utils/apiClient"
+import { useAuth } from "../hooks/useAuth"
 import LogoutButton from "../components/LogoutButton"
 import { supabase } from "../services/supabase"
 
@@ -12,6 +13,8 @@ function Retas() {
   const [tipo, setTipo] = useState("activas")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+
+  const { user } = useAuth()
 
   // 🚀 fetch retas
   const fetchRetas = async () => {
@@ -122,16 +125,27 @@ function Retas() {
 
               {/* 📊 info */}
               <div className="flex-grow-1">
+                
                 <div style={{ fontWeight: "bold" }}>
+                  {new Date(reta.fecha).toLocaleString('es-ES', {
+                    weekday: 'long',  
+                    month: 'long', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </div>
+
+                <div style={{ fontSize: "12px" }}>
                   {reta.club_nombre}
                 </div>
 
                 <div style={{ fontSize: "12px" }}>
-                  {new Date(reta.fecha).toLocaleString()}
+                  Nivel: {reta.nivel}
                 </div>
 
                 <div style={{ fontSize: "12px" }}>
-                  Nivel: {reta.nivel} • {reta.formato}
+                  Formato: {reta.formato}
                 </div>
 
                 <div style={{ fontSize: "12px" }}>
@@ -142,6 +156,17 @@ function Retas() {
             </div>
           </Card>
         ))}
+      
+      {/* Crear reta Button */}
+      {user?.rol == "master" && (
+        <Button
+          variant="success"
+          className="w-100"
+          onClick={() => navigate("/retas/crear")}
+        >
+          Crear reta
+        </Button>
+      )}
 
       {/* 🔓 logout */}
       <LogoutButton />
