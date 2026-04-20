@@ -13,7 +13,7 @@ function LogoutButton() {
 
   return (
     <div className="text-end mt-3">
-      <Button variant="outline-secondary" onClick={handleLogout}>
+      <Button variant="outline-danger" size="sm" onClick={handleLogout}>
         Cerrar sesión
       </Button>
     </div>
