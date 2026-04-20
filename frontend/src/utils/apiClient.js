@@ -17,7 +17,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         throw new Error(errorData.detail || "Error en la solicitud")
     }
 
-    return res.json()
+    return res
 }
 
 export default API_URL

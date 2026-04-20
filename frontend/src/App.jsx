@@ -3,7 +3,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-//import Retas from "./pages/Retas"
+import Retas from "./pages/Retas"
 //import RetaDetail from "./pages/RetaDetail"
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route element={<ProtectedRoute />}>
-          {/*<Route path="/" element={<Retas />} />*/}
+          {<Route path="/" element={<Retas />} />}
           {/*<Route path="/retas/:id" element={<RetaDetail />} />*/}
         </Route>
       </Routes>
