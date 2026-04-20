@@ -148,6 +148,15 @@ function Register() {
           {loading ? "Registrando..." : "Registrarse"}
         </Button>
 
+        <div className="text-center mt-3">
+          <p>
+            ¿Ya tienes cuenta?{" "}
+            <a href="/login" className="text-decoration-none">
+              Ingresa aquí
+            </a>
+          </p>
+        </div>
+
       </Form>
     </Container>
   )

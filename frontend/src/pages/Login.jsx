@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { Container, Form, Button, Alert, Image } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../hooks/useAuth"
 import LogoPGM from "../assets/LogoPGM.svg"
 import API_URL from "../utils/apiClient"
 
 function Login() {
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const [form, setForm] = useState({
     telefono: "",
@@ -66,7 +68,8 @@ function Login() {
       }
 
       // 🔐 guardar token
-      localStorage.setItem("token", data.access_token)
+      // localStorage.setItem("token", data.access_token)
+      login(data.access_token)
 
       // 🎉 redirigir
       navigate("/")
@@ -124,6 +127,16 @@ function Login() {
         >
           {loading ? "Ingresando..." : "Iniciar sesión"}
         </Button>
+
+        <div className="text-center mt-3">
+          <p>
+            ¿No tienes cuenta?{" "}
+            <a href="/register" className="text-decoration-none">
+              Regístrate aquí
+            </a>
+          </p>
+        </div>
+
 
       </Form>
     </Container>
