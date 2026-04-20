@@ -108,9 +108,10 @@ def get_reta_detail(
         raise HTTPException(status_code=404, detail="Reta no encontrada")
 
     # 👥 jugadores activos
-    jugadores_activos = [
-        rp for rp in reta.jugadores if rp.status == "activo"
-    ]
+    jugadores_activos = db.query(RetaPlayer).filter(
+        RetaPlayer.reta_id == reta_id,
+        RetaPlayer.status == "activo"
+    ).order_by(RetaPlayer.status_updated_at.asc()).all()
 
     jugadores_response = []
 
@@ -165,10 +166,6 @@ def join_reta(
 
     if not reta:
         raise HTTPException(status_code=404, detail="Reta no encontrada")
-
-    # ⏰ Validar que la reta siga activa
-    if reta.fecha < func.now():
-        raise HTTPException(status_code=400, detail="La reta ya pasó")
 
     # Validar que el usuario no esté vetado
     if current_user.veto:

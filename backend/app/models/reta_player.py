@@ -17,6 +17,7 @@ class RetaPlayer(Base):
     parent_player_id = Column(Integer, nullable=True) # Para jugadores en pareja
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    status_updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # 🔗 Relaciones
     reta = relationship("Reta", back_populates="jugadores")
