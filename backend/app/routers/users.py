@@ -55,3 +55,15 @@ def get_whatsapp_link(
     return {
         "whatsapp_link": whatsapp_link
     }
+
+@router.get("")
+def get_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # 🔐 Validar master
+    if current_user.rol != "master":
+        raise HTTPException(status_code=403, detail="Solo masters pueden ver la lista de usuarios")
+
+    users = db.query(User).all()
+    return users

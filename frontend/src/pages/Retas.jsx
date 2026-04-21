@@ -168,6 +168,17 @@ function Retas() {
         </Button>
       )}
 
+      {/* Lista de usuarios Button */}
+      {user?.rol == "master" && (
+        <Button
+          variant="outline-secondary"
+          className="w-100 mt-2"
+          onClick={() => navigate("/jugadores")}
+        >
+          Lista de Jugadores
+        </Button>
+      )}
+
       {/* 🔓 logout */}
       <LogoutButton />
 
