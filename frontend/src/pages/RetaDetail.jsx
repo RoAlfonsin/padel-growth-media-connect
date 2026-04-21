@@ -9,6 +9,7 @@ import { supabase } from "../services/supabase"
 function RetaDetail() {
   const { id } = useParams()
   const { user } = useAuth()
+  const isMaster = user.rol === "master"
   const [actionLoading, setActionLoading] = useState(false)
   const [actionError, setActionError] = useState("")
   const navigate = useNavigate()
@@ -137,6 +138,28 @@ function RetaDetail() {
     }
   }
 
+  const handleConfirm = async (userId) => {
+    try {
+      setActionLoading(true)
+      setActionError("")
+
+      const res = await fetchWithAuth(`/retas/${id}/confirm/${userId}`, {
+        method: "POST"
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Error al confirmar")
+      }
+
+    } catch (err) {
+      setActionError(err.message)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   return (
     <Container style={{ maxWidth: "400px" }} className="mt-3">
 
@@ -199,12 +222,29 @@ function RetaDetail() {
             {j.nombre}
             {!j.user_id}
           </div>
-
-          {j.confirmado ? (
-            <Badge bg="success" style={{ fontSize: "10px" }} >✓</Badge>
-          ) : (
-            <Badge bg="secondary" style={{ fontSize: "10px" }}>✓</Badge>
+          
+          {/* Mostrar palomita solo si está confirmado O si no es master */}
+          {(j.confirmado || !isMaster) && (
+            j.confirmado ? (
+              <Badge bg="success" style={{ fontSize: "10px" }} >✓</Badge>
+            ) : (
+              <Badge bg="secondary" style={{ fontSize: "10px" }}>✓</Badge>
+            )
           )}
+
+          {/* Botón de confirmación solo para master cuando no está confirmado */}
+          {isMaster && j.user_id && !j.confirmado && (
+            <Button
+              size="sm"
+              variant="outline-success"
+              onClick={() => handleConfirm(j.user_id)}
+              disabled={actionLoading}
+              style={{ fontSize: "6px" }}
+            >
+              ✓
+            </Button>
+          )}
+
         </Card>
       ))}
 
