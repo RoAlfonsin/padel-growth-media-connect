@@ -251,7 +251,7 @@ function RetaDetail() {
       {/* ⏳ lista de espera */}
       {espera.length > 0 && (
         <>
-          <h6 className="mt-3">Lista de espera</h6>
+          <h6 className="mt-3">Lista de espera </h6>
 
           {espera.map((j, i) => (
             <Card key={i} className="mb-1 p-1 d-flex flex-row justify-content-between">
