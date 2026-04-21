@@ -6,6 +6,7 @@ import Register from "./pages/Register"
 import Retas from "./pages/Retas"
 import CreateReta from "./pages/CreateReta"
 import RetaDetail from "./pages/RetaDetail"
+import Jugadores from "./pages/Jugadores"
 
 function App() {
   return (
@@ -15,8 +16,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<ProtectedRoute />}>
           {<Route path="/" element={<Retas />} />}
-          <Route path="/retas/crear" element={<CreateReta />} />
+          {<Route path="/retas/crear" element={<CreateReta />} />}
           {<Route path="/retas/:id" element={<RetaDetail />} />}
+          {<Route path="/jugadores" element={<Jugadores />} />}
         </Route>
       </Routes>
     </BrowserRouter>

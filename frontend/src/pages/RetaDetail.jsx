@@ -169,7 +169,7 @@ function RetaDetail() {
         throw new Error(data.detail || "Error al generar link")
       }
 
-      window.open(data.link, "_blank")
+      window.open(data.whatsapp_link, "_blank")
 
     } catch (err) {
       setActionError(err.message)
