@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react"
 import { Container, Card, Badge, Button, Spinner, Alert, Image } from "react-bootstrap"
 import { useParams, useNavigate } from "react-router-dom"
+import { useAuth } from "../hooks/useAuth"
 import { fetchWithAuth } from "../utils/apiClient"
 import LogoutButton from "../components/LogoutButton"
 import { supabase } from "../services/supabase"
 
 function RetaDetail() {
   const { id } = useParams()
+  const { user } = useAuth()
+  const [actionLoading, setActionLoading] = useState(false)
+  const [actionError, setActionError] = useState("")
   const navigate = useNavigate()
 
   const [reta, setReta] = useState(null)
@@ -77,6 +81,62 @@ function RetaDetail() {
 
   const isFull = activos.length >= reta.cupos_max
 
+  const isJoined = reta.jugadores.some(
+  (j) => j.user_id === user?.id
+  )
+
+  const handleJoin = async (conPareja = false) => {
+  try {
+    setActionLoading(true)
+    setActionError("")
+
+    const params = new URLSearchParams()
+    params.append('con_pareja', conPareja)
+    params.append('nombre_pareja', user.nombre + " (invitado)")
+
+    const res = await fetchWithAuth(`/retas/${id}/join?${params}`, {
+      method: "POST"
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      throw new Error(data.detail || "Error al unirse")
+    }
+
+    fetchReta()
+
+  } catch (err) {
+    setActionError(err.message)
+  } finally {
+    setActionLoading(false)
+  }
+}
+
+  const handleLeave = async () => {
+    try {
+      setActionLoading(true)
+      setActionError("")
+
+      const res = await fetchWithAuth(`/retas/${id}/leave`, {
+        method: "POST"
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Error al salir")
+      }
+
+      fetchReta()
+
+    } catch (err) {
+      setActionError(err.message)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   return (
     <Container style={{ maxWidth: "400px" }} className="mt-3">
 
@@ -137,7 +197,7 @@ function RetaDetail() {
           <div style={{ fontSize: "12px"}}>
             <span style={{ fontWeight: "bold", marginRight: "8px" }}>{i + 1}.</span>
             {j.nombre}
-            {!j.user_id && <span style={{ fontSize: 10 }}> (Invitado)</span>}
+            {!j.user_id}
           </div>
 
           {j.confirmado ? (
@@ -174,6 +234,43 @@ function RetaDetail() {
             </Card>
           ))}
         </>
+      )}
+
+      {/* 🎮 acciones */}
+      {actionError && (
+        <Alert variant="danger" className="mt-2">
+          {actionError}
+        </Alert>
+      )}
+
+      {!isJoined ? (
+        <>
+          <Button
+            className="w-100 mt-3"
+            onClick={() => handleJoin(false)}
+            disabled={actionLoading}
+          >
+            {actionLoading ? "Uniéndose..." : "Unirme"}
+          </Button>
+
+          <Button
+            variant="outline-primary"
+            className="w-100 mt-2"
+            onClick={() => handleJoin(true)}
+            disabled={actionLoading}
+          >
+            {actionLoading ? "Uniéndose..." : "Unirme con invitado (2 jugadores)"}
+          </Button>
+        </>
+      ) : (
+        <Button
+          variant="outline-danger"
+          className="w-100 mt-3"
+          onClick={handleLeave}
+          disabled={actionLoading}
+        >
+          {actionLoading ? "Saliendo..." : "Salir de la reta"}
+        </Button>
       )}
 
       {/* 💬 WhatsApp */}
