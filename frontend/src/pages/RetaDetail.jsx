@@ -160,6 +160,22 @@ function RetaDetail() {
     }
   }
 
+  const handleWhatsapp = async (userId) => {
+    try {
+      const res = await fetchWithAuth(`/users/${userId}/whatsapp-link`)
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Error al generar link")
+      }
+
+      window.open(data.link, "_blank")
+
+    } catch (err) {
+      setActionError(err.message)
+    }
+  }
+
   return (
     <Container style={{ maxWidth: "400px" }} className="mt-3">
 
@@ -221,6 +237,17 @@ function RetaDetail() {
             <span style={{ fontWeight: "bold", marginRight: "8px" }}>{i + 1}.</span>
             {j.nombre}
             {!j.user_id}
+            {isMaster && j.user_id && (
+            <Button
+              size="sm"
+              className="ms-4"
+              variant="outline-info"
+              onClick={() => handleWhatsapp(j.user_id)}
+              style={{ fontSize: "8px" }}
+            >
+              WA
+            </Button>
+            )}
           </div>
           
           {/* Mostrar palomita solo si está confirmado O si no es master */}
@@ -256,21 +283,44 @@ function RetaDetail() {
           {espera.map((j, i) => (
             <Card key={i} className="mb-1 p-1 d-flex flex-row justify-content-between">
               <div style={{ fontSize: "12px"}}>
-                <span style={{ fontWeight: "bold", marginRight: "8px" }}>{reta.cupos_max + i + 1}.</span>
+                <span style={{ fontWeight: "bold", marginRight: "8px" }}>{i + 1}.</span>
                 {j.nombre}
-                {!j.user_id && j.inviter_name && (
-                  <span style={{ fontSize: 10 }}> (Invitado de {j.inviter_name})</span>
-                )}
-                {!j.user_id && !j.inviter_name && (
-                  <span style={{ fontSize: 10 }}> (Invitado)</span>
+                {!j.user_id}
+                {isMaster && j.user_id && (
+                <Button
+                  size="sm"
+                  className="ms-4"
+                  variant="outline-info"
+                  onClick={() => handleWhatsapp(j.user_id)}
+                  style={{ fontSize: "8px" }}
+                >
+                  WA
+                </Button>
                 )}
               </div>
-
-              {j.confirmado ? (
-                <Badge bg="success" style={{ fontSize: "10px" }} >✓</Badge>
-              ) : (
-                <Badge bg="secondary" style={{ fontSize: "10px" }}>✓</Badge>
+              
+              {/* Mostrar palomita solo si está confirmado O si no es master */}
+              {(j.confirmado || !isMaster) && (
+                j.confirmado ? (
+                  <Badge bg="success" style={{ fontSize: "10px" }} >✓</Badge>
+                ) : (
+                  <Badge bg="secondary" style={{ fontSize: "10px" }}>✓</Badge>
+                )
               )}
+
+              {/* Botón de confirmación solo para master cuando no está confirmado */}
+              {isMaster && j.user_id && !j.confirmado && (
+                <Button
+                  size="sm"
+                  variant="outline-success"
+                  onClick={() => handleConfirm(j.user_id)}
+                  disabled={actionLoading}
+                  style={{ fontSize: "6px" }}
+                >
+                  ✓
+                </Button>
+              )}
+
             </Card>
           ))}
         </>
