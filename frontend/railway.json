@@ -1,4 +1,4 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "startCommand": "npx serve -s dist -l $PORT"
+  "buildCommand": "npm ci && npm run build",
+  "startCommand": "node server.js"
 }
