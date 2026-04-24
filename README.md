@@ -351,6 +351,7 @@ User (N) ──→ (N) Veto         [usuario veta a otros usuarios]
 
 ### 🔄 v1.1 (En desarrollo)
 - [ ] Agregar retas femeniles
+- [ ] Permitir al master agregar clubes desde la app
 - [ ] Login con Google
 - [ ] Perfil de usuario más completo
 - [ ] Historial y estadísticas
