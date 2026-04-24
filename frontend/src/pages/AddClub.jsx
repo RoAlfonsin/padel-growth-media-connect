@@ -108,11 +108,9 @@ function AddClub() {
   }
 
   return (
-    <Container style={{ maxWidth: "500px" }} className="mt-4 mb-4">
+    <Container style={{ maxWidth: "500px" }} className="mt-4">
+      <h5 className="mb-3">Agregar Club</h5>  
       <Card className="shadow-sm">
-        <Card.Header className="bg-primary text-white">
-          <h5 className="mb-0">Crear Nuevo Club</h5>
-        </Card.Header>
         <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}
           {success && <Alert variant="success">{success}</Alert>}
@@ -186,16 +184,16 @@ function AddClub() {
 
             {/* Campo: Perfil PadelPro Manager */}
             <Form.Group className="mb-4">
-              <Form.Label>Perfil PadelPro Manager</Form.Label>
+              <Form.Label>Perfil Padel Growth Media</Form.Label>
               <Form.Control
                 type="url"
                 name="pgm_profile_url"
                 value={form.pgm_profile_url}
                 onChange={handleChange}
-                placeholder="https://padelpromanager.com/club/..."
+                placeholder="https://padelgrowthmedia.com/club/..."
               />
               <Form.Text className="text-muted">
-                Opcional: Link al perfil del club en PadelPro Manager
+                Opcional: Link al perfil del club en Padel Growth Media
               </Form.Text>
             </Form.Group>
 
