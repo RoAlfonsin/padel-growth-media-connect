@@ -7,6 +7,7 @@ import Retas from "./pages/Retas"
 import CreateReta from "./pages/CreateReta"
 import RetaDetail from "./pages/RetaDetail"
 import Jugadores from "./pages/Jugadores"
+import AddClub from "./pages/AddClub"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {<Route path="/retas/crear" element={<CreateReta />} />}
           {<Route path="/retas/:id" element={<RetaDetail />} />}
           {<Route path="/jugadores" element={<Jugadores />} />}
+          {<Route path="/clubs/crear" element={<AddClub />} />}
         </Route>
       </Routes>
     </BrowserRouter>

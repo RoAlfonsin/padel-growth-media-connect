@@ -168,6 +168,17 @@ function Retas() {
         </Button>
       )}
 
+      {/* Crear club Button */}
+      {user?.rol == "master" && (
+        <Button
+          variant="outline-success"
+          className="w-100 mt-2"
+          onClick={() => navigate("/clubs/crear")}
+        >
+          Agregar club
+        </Button>
+      )}
+
       {/* Lista de usuarios Button */}
       {user?.rol == "master" && (
         <Button
